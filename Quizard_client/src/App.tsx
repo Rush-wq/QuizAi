@@ -61,7 +61,7 @@ function App() {
 
   const generateQuiz = async () => {
     if (!prompt.trim()) {
-      setError('Please enter a topic for your quiz');
+      setError('Please enter a topic for your quiz!');
       return;
     }
 
