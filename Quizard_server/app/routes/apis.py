@@ -17,13 +17,14 @@ def health_check():
 @api_blueprint.route('/quiz/generate_quiz', methods=['POST'])
 def generate_quiz():
     try:
-        file = request.files['file'] if 'file' in request.files else None
+        file_list = request.files.getlist('files') if 'files' in request.files else ([request.files['file']] if 'file' in request.files else None)
         prompt = request.form.get('prompt')
+
 
         if not prompt:
             return APIResponse.error("GENERATION_ERROR", "There was an error generating your quiz")
 
-        generation_response = quiz_generator.generate_quiz(quiz_description=prompt, file=file)
+        generation_response = quiz_generator.generate_quiz(quiz_description=prompt, files=file_list)
 
         if "error" in generation_response:
             error = generation_response["error"]

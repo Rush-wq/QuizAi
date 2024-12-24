@@ -1,7 +1,7 @@
 from google import genai
 import google.generativeai as googleGenai
 from dotenv import load_dotenv
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import os
 import json
 
@@ -14,6 +14,8 @@ class QuizGenerator(object):
     IT IS IMPERATIVE THAT THE RESPONSE IS A JSON AND NO OTHER TEXT.
     MAKE SURE TO FOLLOW THIS RULE AT ALL COSTS.
     ITS IMPORTANT TO VALUE ACCURACY IN BOTH THE QUESTIONS AND ANSWERS AND ALWAYS PREFER THE REFERENCE DATA IF GIVEN BEFORE RESEARCHING ONLINE.
+    AVOID GENERATING ANSWERS THAT VERY GREATLY IN LEGTH TO AVOID GIVING HINTS TRY AND MAKES ALL THE ANSWERS OF SIMILAR QUALITY AND LENGTH.
+    AND AVOID SUPER LONG ANSWERS WHEN POSSIBLE.
 
     Here is the json schema:
     {{
@@ -63,7 +65,7 @@ class QuizGenerator(object):
         googleGenai.configure(api_key=os.environ["GOOGLE_API_KEY"])
         self.model = googleGenai.GenerativeModel("gemini-2.0-flash-exp") 
 
-    def generate_quiz(self, quiz_description: str, file=None) -> Dict[str, Any]:
+    def generate_quiz(self, quiz_description: str, files:Optional[list] = None) -> Dict[str, Any]:
         """
         Generate a quiz based on description using AI model.
         Returns dictionary with quiz data or error information.
@@ -83,22 +85,26 @@ class QuizGenerator(object):
             f"{self.prompt_format_enforcer_text}"
         )
 
-        file_to_gen = None
+        files_to_gen = []
 
-        if file:
-            temp_dir = os.path.join(os.path.dirname(__file__), 'temp')
-            os.makedirs(temp_dir, exist_ok=True)
+        if files:
+            for file in files:
+                temp_dir = os.path.join(os.path.dirname(__file__), 'temp')
+                os.makedirs(temp_dir, exist_ok=True)
 
-            temp_path = os.path.join(temp_dir, f"temp_{os.urandom(8).hex()}{os.path.splitext(file.filename)[1]}")
-            with open(temp_path, 'wb') as temp:
-                temp.write(file.read())
+                temp_path = os.path.join(temp_dir, f"temp_{os.urandom(8).hex()}{os.path.splitext(file.filename)[1]}")
+                with open(temp_path, 'wb') as temp:
+                    temp.write(file.read())
 
-            
-            file_to_gen = googleGenai.upload_file(path=temp_path)
+                
+                files_to_gen.append(googleGenai.upload_file(path=temp_path))
 
         try:
+            content_for_model = [prompt]
+            content_for_model.extend(files_to_gen)
+
             response = self.model.generate_content(
-                contents=prompt if not file_to_gen else [file_to_gen, prompt],
+                contents=content_for_model,
             )
 
             if not response:

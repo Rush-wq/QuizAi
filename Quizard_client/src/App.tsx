@@ -58,12 +58,16 @@ function App() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null;
-    setSelectedFile(file);
+    const files = event.target.files;  
+    if (files) {  
+        // Convert FileList to Array  
+        const filesArray = Array.from(files);  
+        setSelectedFiles(filesArray);  
+    }
   };
 
   const generateQuiz = async () => {
@@ -77,8 +81,10 @@ function App() {
 
     const formData = new FormData();
 
-    if(selectedFile){
-      formData.append('file', selectedFile)
+    if(selectedFiles){
+      selectedFiles.forEach((currentFile :File) => {
+        formData.append('files', currentFile)
+      });
     }
     formData.append('prompt', prompt);
 
@@ -166,7 +172,11 @@ function App() {
                 'Create Quiz'
               )}
             </button>
-            <input type='file' className='file-input' onChange={handleFileChange}></input>
+            <input type='file' 
+            className='file-input' 
+            onChange={handleFileChange} 
+            accept=".pdf, .jpg, .jpeg, .png, .txt"
+            multiple></input>
           </div>
         </div>
       </div>
