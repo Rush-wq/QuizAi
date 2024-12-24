@@ -16,21 +16,25 @@ def health_check():
 
 @api_blueprint.route('/quiz/generate_quiz', methods=['POST'])
 def generate_quiz():
-    data = request.get_json()
+    try:
+        file = request.files['file'] if 'file' in request.files else None
+        prompt = request.form.get('prompt')
 
-    if "prompt" not in data:
-        return APIResponse.error("GENERATION_ERROR", "There was an error generating your quiz")
-    
-    print("Testing")
+        if not prompt:
+            return APIResponse.error("GENERATION_ERROR", "There was an error generating your quiz")
 
-    generation_response = quiz_generator.generate_quiz(quiz_description=data["prompt"])
+        generation_response = quiz_generator.generate_quiz(quiz_description=prompt, file=file)
 
-    if "error" in generation_response:
-        error = generation_response["error"]
-        return APIResponse.error(
-            code=error["code"],
-            message=error["message"],
-            details=error.get("details")
-        )
+        if "error" in generation_response:
+            error = generation_response["error"]
+            return APIResponse.error(
+                code=error["code"],
+                message=error["message"],
+                details=error.get("details")
+            )
 
-    return APIResponse.success(data=generation_response["data"])
+        return APIResponse.success(data=generation_response["data"])
+
+    except Exception as e:
+        print(f"Error in generate_quiz: {str(e)}")
+        return APIResponse.error("GENERATION_ERROR", "There was an error processing your request")

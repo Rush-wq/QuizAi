@@ -58,6 +58,13 @@ function App() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+    setSelectedFile(file);
+  };
 
   const generateQuiz = async () => {
     if (!prompt.trim()) {
@@ -67,14 +74,19 @@ function App() {
 
     setLoading(true);
     setError(null);
-    
+
+    const formData = new FormData();
+
+    if(selectedFile){
+      formData.append('file', selectedFile)
+    }
+    formData.append('prompt', prompt);
+
     try {
+
       const response = await fetch('http://localhost:5000/api/v1/quiz/generate_quiz', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt })
+        body: formData
       });
 
       const data: APIResponse = await response.json();
@@ -154,6 +166,7 @@ function App() {
                 'Create Quiz'
               )}
             </button>
+            <input type='file' className='file-input' onChange={handleFileChange}></input>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 from google import genai
+import google.generativeai as googleGenai
 from dotenv import load_dotenv
 from typing import Dict, Any
 import os
@@ -59,12 +60,15 @@ class QuizGenerator(object):
         self.client = genai.Client(api_key = os.getenv('GOOGLE_API_KEY'))
         self.model_id = "gemini-2.0-flash-exp"
 
+        googleGenai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+        self.model = googleGenai.GenerativeModel("gemini-2.0-flash-exp") 
 
-    def generate_quiz(self, quiz_description: str) -> Dict[str, Any]:
+    def generate_quiz(self, quiz_description: str, file=None) -> Dict[str, Any]:
         """
         Generate a quiz based on description using AI model.
         Returns dictionary with quiz data or error information.
         """
+
         if not quiz_description.strip():
             return {
                 "error": {
@@ -79,10 +83,22 @@ class QuizGenerator(object):
             f"{self.prompt_format_enforcer_text}"
         )
 
+        file_to_gen = None
+
+        if file:
+            temp_dir = os.path.join(os.path.dirname(__file__), 'temp')
+            os.makedirs(temp_dir, exist_ok=True)
+
+            temp_path = os.path.join(temp_dir, f"temp_{os.urandom(8).hex()}{os.path.splitext(file.filename)[1]}")
+            with open(temp_path, 'wb') as temp:
+                temp.write(file.read())
+
+            
+            file_to_gen = googleGenai.upload_file(path=temp_path)
+
         try:
-            response = self.client.models.generate_content(
-                model=self.model_id,
-                contents=prompt,
+            response = self.model.generate_content(
+                contents=prompt if not file_to_gen else [file_to_gen, prompt],
             )
 
             if not response:

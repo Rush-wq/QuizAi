@@ -8,6 +8,7 @@ dist-ssr/
 __pycache__/
 venv/
 .env
+temp/
 
 # Logs
 logs
