@@ -1,4 +1,3 @@
-from google import genai
 import google.generativeai as googleGenai
 from dotenv import load_dotenv
 from typing import Dict, Any, Optional
@@ -10,60 +9,16 @@ load_dotenv()
 
 
 class QuizGenerator(object):
-    prompt_format_enforcer_text = '''
-    IT IS IMPERATIVE THAT THE RESPONSE IS A JSON AND NO OTHER TEXT.
-    MAKE SURE TO FOLLOW THIS RULE AT ALL COSTS.
-    ITS IMPORTANT TO VALUE ACCURACY IN BOTH THE QUESTIONS AND ANSWERS AND ALWAYS PREFER THE REFERENCE DATA IF GIVEN BEFORE RESEARCHING ONLINE.
-    AVOID GENERATING ANSWERS THAT VERY GREATLY IN LEGTH TO AVOID GIVING HINTS TRY AND MAKES ALL THE ANSWERS OF SIMILAR QUALITY AND LENGTH.
-    AND AVOID SUPER LONG ANSWERS WHEN POSSIBLE.
-    IF YOU ARE GENERATING SOMETHING IN ANOTHER LANGUAGE MAKE SURE TO USE PROPER GRAMMER THE BEST YOU UNDERSTAND IN THE LANGUAGE.
-    MAKE SURE THAT WHEN USING ANOTHER LANGUAGE TO MAKE SURE TO NOT CHNAGE THE SCHEEMA OR IMPORTANT DATA IN THE JSON FILE ONLY THE TEXT FOR THE QUESTIONS AND ANSWERS AND ABSOLUTLY NOTHING ELSE.
-    ALL OTHER LANGUAGES ARE ALLOWED BUT MAKE SURE TO VALUE GIVING CORRECT RESPOSNES.
-
-    Here is the json schema:
-    {{
-    "$schema": "http://json-schema.org/draft-07/schema",
-    "type": "object",
-    "required": ["questions"],
-    "properties": {{
-        "questions": {{
-        "type": "array",
-        "items": {{
-            "type": "object",
-            "required": ["title", "options", "answer"],
-            "properties": {{
-            "title": {{
-                "type": "string",
-                "description": "The question text"
-            }},
-            "options": {{
-                "type": "array",
-                "minItems": 4,
-                "maxItems": 4,
-                "items": {{
-                "type": "string",
-                "description": "An answer option"
-                }}
-            }},
-            "answer": {{
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 3,
-                "description": "Index of the correct answer (0-3)"
-            }}
-            }},
-            "additionalProperties": false
-        }},
-        "minItems": 1
-        }}
-    }},
-    "additionalProperties": false
-    }}
-    '''
 
     def __init__(self):
-        self.client = genai.Client(api_key = os.getenv('GOOGLE_API_KEY'))
-        self.model_id = "gemini-2.0-flash-exp"
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'prompt_tools\prompt_start.txt'), "r") as file:
+            self.prompt_start_text  = file.read()
+
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'prompt_tools\prompt_end.txt'), "r") as file:
+            self.prompt_end_text  = file.read()
+
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'prompt_tools\prompt_json_schema.txt'), "r") as file:
+            self.prompt_josn_schema_text  = file.read()
 
         googleGenai.configure(api_key=os.environ["GOOGLE_API_KEY"])
         self.model = googleGenai.GenerativeModel("gemini-2.0-flash-exp") 
@@ -82,11 +37,14 @@ class QuizGenerator(object):
                 }
             }
 
-        prompt = (
-            f"Generate a quiz based on: {quiz_description}. "
-            f"Send this quiz back in a json file format. "
-            f"{self.prompt_format_enforcer_text}"
-        )
+        prompt =f"""
+            {self.prompt_start_text}
+            Generate a quiz based on: {quiz_description}. 
+            {self.prompt_end_text}
+            {self.prompt_josn_schema_text}
+            """
+
+
 
         files_to_gen = []
 
