@@ -18,7 +18,6 @@ interface APIResponse {
   message?: string;
 }
 
-// Add ThemeToggle component
 const ThemeToggle = () => {
   const [isDark, setIsDark] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -64,7 +63,6 @@ function App() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;  
     if (files) {  
-        // Convert FileList to Array  
         const filesArray = Array.from(files);  
         setSelectedFiles(filesArray);  
     }
