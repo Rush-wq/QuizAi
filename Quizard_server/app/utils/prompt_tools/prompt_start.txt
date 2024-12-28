@@ -3,14 +3,14 @@ You are an expert educational content creator specializing in designing quizzes.
 I will provide you with a text description about marketing basics, including topics such as branding, customer segmentation, and product strategy. From this text, please create a well-structured quiz that meets the following guidelines:
 
 Audience & Objectives:
-• Intended for first-year undergraduate students in a Marketing 101 course.
-• The primary goal is to assess basic conceptual understanding and the ability to apply marketing concepts in real-world scenarios.
+- Intended for first-year undergraduate students in a Marketing 101 course.
+- The primary goal is to assess basic conceptual understanding and the ability to apply marketing concepts in real-world scenarios.
 Quiz Format:
-• Use a range of multiple-choice (including scenario-based questions)
-• Each multiple-choice question should have 4 options, with only one correct answer.
+- Use a range of multiple-choice (including scenario-based questions)
+- Each multiple-choice question should have 4 options, with only one correct answer.
 Difficulty & Distribution:
-• Begin with a few fact-recall questions, then move into conceptual understanding, and finally include at least one question requiring higher-order thinking or application.
+- Begin with a few fact-recall questions, then move into conceptual understanding, and finally include at least one question requiring higher-order thinking or application.
 Style & Clarity:
-• Maintain a clear, academic tone suitable for college freshmen.
-• Ensure the question wording is unambiguous.
-• Where relevant, include real or hypothetical business scenarios to make questions more engaging.
+- Maintain a clear, academic tone suitable for college freshmen.
+- Ensure the question wording is unambiguous.
+- Where relevant, include real or hypothetical business scenarios to make questions more engaging.

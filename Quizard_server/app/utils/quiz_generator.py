@@ -11,17 +11,20 @@ load_dotenv()
 class QuizGenerator(object):
 
     def __init__(self):
-        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'prompt_tools\prompt_start.txt'), "r") as file:
+        default_path = os.path.dirname(os.path.abspath(__file__))
+
+        with open(os.path.join(default_path, 'prompt_tools\prompt_start.txt'), "r") as file:
             self.prompt_start_text  = file.read()
 
-        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'prompt_tools\prompt_end.txt'), "r") as file:
+        with open(os.path.join(default_path, 'prompt_tools\prompt_end.txt'), "r") as file:
             self.prompt_end_text  = file.read()
 
-        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'prompt_tools\prompt_json_schema.txt'), "r") as file:
+        with open(os.path.join(default_path, 'prompt_tools\prompt_json_schema.txt'), "r") as file:
             self.prompt_josn_schema_text  = file.read()
 
         googleGenai.configure(api_key=os.environ["GOOGLE_API_KEY"])
         self.model = googleGenai.GenerativeModel("gemini-2.0-flash-exp") 
+
 
     def generate_quiz(self, quiz_description: str, files:Optional[list] = None) -> Dict[str, Any]:
         """
