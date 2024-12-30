@@ -18,7 +18,6 @@ interface APIResponse {
   message?: string;
 }
 
-// Add ThemeToggle component
 const ThemeToggle = () => {
   const [isDark, setIsDark] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -58,6 +57,16 @@ function App() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;  
+    if (files) {  
+        const filesArray = Array.from(files);  
+        setSelectedFiles(filesArray);  
+    }
+  };
 
   const generateQuiz = async () => {
     if (!prompt.trim()) {
@@ -67,14 +76,21 @@ function App() {
 
     setLoading(true);
     setError(null);
-    
+
+    const formData = new FormData();
+
+    if(selectedFiles){
+      selectedFiles.forEach((currentFile :File) => {
+        formData.append('files', currentFile)
+      });
+    }
+    formData.append('prompt', prompt);
+
     try {
+
       const response = await fetch('http://localhost:5000/api/v1/quiz/generate_quiz', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt })
+        body: formData
       });
 
       const data: APIResponse = await response.json();
@@ -154,6 +170,11 @@ function App() {
                 'Create Quiz'
               )}
             </button>
+            <input type='file' 
+            className='file-input' 
+            onChange={handleFileChange} 
+            accept=".pdf, .jpg, .jpeg, .png, .txt"
+            multiple></input>
           </div>
         </div>
       </div>

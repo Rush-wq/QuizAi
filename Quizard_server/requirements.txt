@@ -5,3 +5,4 @@
  flask-cors
  python-dotenv
  google-genai
+ Werkzeug

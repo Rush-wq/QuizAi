@@ -1,6 +1,6 @@
-from google import genai
+import google.generativeai as googleGenai
 from dotenv import load_dotenv
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import os
 import json
 
@@ -9,62 +9,29 @@ load_dotenv()
 
 
 class QuizGenerator(object):
-    prompt_format_enforcer_text = '''
-    IT IS IMPERATIVE THAT THE RESPONSE IS A JSON AND NO OTHER TEXT.
-    MAKE SURE TO FOLLOW THIS RULE AT ALL COSTS.
-    ITS IMPORTANT TO VALUE ACCURACY IN BOTH THE QUESTIONS AND ANSWERS AND ALWAYS PREFER THE REFERENCE DATA IF GIVEN BEFORE RESEARCHING ONLINE.
-
-    Here is the json schema:
-    {{
-    "$schema": "http://json-schema.org/draft-07/schema",
-    "type": "object",
-    "required": ["questions"],
-    "properties": {{
-        "questions": {{
-        "type": "array",
-        "items": {{
-            "type": "object",
-            "required": ["title", "options", "answer"],
-            "properties": {{
-            "title": {{
-                "type": "string",
-                "description": "The question text"
-            }},
-            "options": {{
-                "type": "array",
-                "minItems": 4,
-                "maxItems": 4,
-                "items": {{
-                "type": "string",
-                "description": "An answer option"
-                }}
-            }},
-            "answer": {{
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 3,
-                "description": "Index of the correct answer (0-3)"
-            }}
-            }},
-            "additionalProperties": false
-        }},
-        "minItems": 1
-        }}
-    }},
-    "additionalProperties": false
-    }}
-    '''
 
     def __init__(self):
-        self.client = genai.Client(api_key = os.getenv('GOOGLE_API_KEY'))
-        self.model_id = "gemini-2.0-flash-exp"
+        default_path = os.path.dirname(os.path.abspath(__file__))
+
+        with open(os.path.join(default_path, 'prompt_tools\prompt_start.txt'), "r") as file:
+            self.prompt_start_text  = file.read()
+
+        with open(os.path.join(default_path, 'prompt_tools\prompt_end.txt'), "r") as file:
+            self.prompt_end_text  = file.read()
+
+        with open(os.path.join(default_path, 'prompt_tools\prompt_json_schema.txt'), "r") as file:
+            self.prompt_josn_schema_text  = file.read()
+
+        googleGenai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+        self.model = googleGenai.GenerativeModel("gemini-2.0-flash-exp") 
 
 
-    def generate_quiz(self, quiz_description: str) -> Dict[str, Any]:
+    def generate_quiz(self, quiz_description: str, files:Optional[list] = None) -> Dict[str, Any]:
         """
         Generate a quiz based on description using AI model.
         Returns dictionary with quiz data or error information.
         """
+
         if not quiz_description.strip():
             return {
                 "error": {
@@ -73,16 +40,35 @@ class QuizGenerator(object):
                 }
             }
 
-        prompt = (
-            f"Generate a quiz based on: {quiz_description}. "
-            f"Send this quiz back in a json file format. "
-            f"{self.prompt_format_enforcer_text}"
-        )
+        prompt =f"""
+            {self.prompt_start_text}
+            Generate a quiz based on: {quiz_description}. 
+            {self.prompt_end_text}
+            {self.prompt_josn_schema_text}
+            """
+
+
+
+        files_to_gen = []
+
+        if files:
+            for file in files:
+                temp_dir = os.path.join(os.path.dirname(__file__), 'temp')
+                os.makedirs(temp_dir, exist_ok=True)
+
+                temp_path = os.path.join(temp_dir, f"temp_{os.urandom(8).hex()}{os.path.splitext(file.filename)[1]}")
+                with open(temp_path, 'wb') as temp:
+                    temp.write(file.read())
+
+                
+                files_to_gen.append(googleGenai.upload_file(path=temp_path))
 
         try:
-            response = self.client.models.generate_content(
-                model=self.model_id,
-                contents=prompt,
+            content_for_model = [prompt]
+            content_for_model.extend(files_to_gen)
+
+            response = self.model.generate_content(
+                contents=content_for_model,
             )
 
             if not response:
