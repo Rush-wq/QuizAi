@@ -44,11 +44,18 @@ jobs:
           VITE_QUIZ_GENERATION_API_URL: ${{ secrets.VITE_QUIZ_GENERATION_API_URL }}
         run: npm run build
 
-      - name: Debug dist directory
+      - name: Create .nojekyll file
         run: |
+          touch dist/.nojekyll
+          echo "Created .nojekyll file"
+
+      - name: Debug build output
+        run: |
+          echo "Contents of current directory:"
+          ls -la
           echo "Contents of dist directory:"
           ls -la dist/
-          echo "Contents of dist/index.html (if it exists):"
+          echo "Checking index.html:"
           cat dist/index.html || echo "index.html not found"
 
       - name: Setup Pages
