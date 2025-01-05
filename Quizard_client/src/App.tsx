@@ -88,7 +88,7 @@ function App() {
 
     try {
 
-      const response = await fetch('http://localhost:5000/api/v1/quiz/generate_quiz', {
+      const response = await fetch('https://quizai-44ay.onrender.com/api/v1/quiz/generate_quiz', {
         method: 'POST',
         body: formData
       });
