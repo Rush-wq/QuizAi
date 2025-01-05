@@ -1,5 +1,4 @@
 import React from 'react';
-import Login from './Login';
 import { ThemeToggle } from './ThemeToggle';
 
 interface QuizPromptProps {
@@ -20,7 +19,6 @@ export const QuizPrompt: React.FC<QuizPromptProps> = ({
   onGenerate
 }) => (
   <div className="app-container">
-    <Login />
     <ThemeToggle />
     <div className="prompt-section">
       <div className="prompt-header">
