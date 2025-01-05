@@ -38,19 +38,19 @@ jobs:
       - name: Debug env variables presence
         run: |
           echo "Checking if env variables are set (will show true/false):"
-          echo "AUTH0_CLIENT_ID is set: ${{ secrets.VITE_AUTH0_CLIENT_ID != '' }}"
-          echo "AUTH0_DOMAIN is set: ${{ secrets.VITE_AUTH0_DOMAIN != '' }}"
-          echo "BACKEND_DEV_URL is set: ${{ secrets.VITE_BACKEND_DEV_URL != '' }}"
-          echo "BACKEND_PROD_URL is set: ${{ secrets.VITE_BACKEND_PROD_URL != '' }}"
-          echo "QUIZ_GENERATION_API_URL is set: ${{ secrets.VITE_QUIZ_GENERATION_API_URL != '' }}"
+          echo "AUTH0_CLIENT_ID is set: ${{ env.VITE_AUTH0_CLIENT_ID != '' }}"
+          echo "AUTH0_DOMAIN is set: ${{ env.VITE_AUTH0_DOMAIN != '' }}"
+          echo "BACKEND_DEV_URL is set: ${{ env.VITE_BACKEND_DEV_URL != '' }}"
+          echo "BACKEND_PROD_URL is set: ${{ env.VITE_BACKEND_PROD_URL != '' }}"
+          echo "QUIZ_GENERATION_API_URL is set: ${{ env.VITE_QUIZ_GENERATION_API_URL != '' }}"
 
       - name: Build
         env:
-          VITE_AUTH0_CLIENT_ID: ${{ secrets.VITE_AUTH0_CLIENT_ID }}
-          VITE_AUTH0_DOMAIN: ${{ secrets.VITE_AUTH0_DOMAIN }}
-          VITE_BACKEND_DEV_URL: ${{ secrets.VITE_BACKEND_DEV_URL }}
-          VITE_BACKEND_PROD_URL: ${{ secrets.VITE_BACKEND_PROD_URL }}
-          VITE_QUIZ_GENERATION_API_URL: ${{ secrets.VITE_QUIZ_GENERATION_API_URL }}
+          VITE_AUTH0_CLIENT_ID: ${{ env.VITE_AUTH0_CLIENT_ID }}
+          VITE_AUTH0_DOMAIN: ${{ env.VITE_AUTH0_DOMAIN }}
+          VITE_BACKEND_DEV_URL: ${{ env.VITE_BACKEND_DEV_URL }}
+          VITE_BACKEND_PROD_URL: ${{ env.VITE_BACKEND_PROD_URL }}
+          VITE_QUIZ_GENERATION_API_URL: ${{ env.VITE_QUIZ_GENERATION_API_URL }}
         run: npm run build
 
       - name: Create .nojekyll file
