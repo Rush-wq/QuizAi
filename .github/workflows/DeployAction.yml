@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./Quizard_client  # Set the working directory for all run steps
+        working-directory: ./Quizard_client
 
     steps:
       - name: Checkout
@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: './Quizard_client/package-lock.json'  # Specify path to package-lock.json
+          cache-dependency-path: './Quizard_client/package-lock.json'
 
       - name: Install dependencies
         run: npm ci
@@ -44,13 +44,20 @@ jobs:
           VITE_QUIZ_GENERATION_API_URL: ${{ secrets.VITE_QUIZ_GENERATION_API_URL }}
         run: npm run build
 
+      - name: Debug dist directory
+        run: |
+          echo "Contents of dist directory:"
+          ls -la dist/
+          echo "Contents of dist/index.html (if it exists):"
+          cat dist/index.html || echo "index.html not found"
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './Quizard_client/dist'  # Adjusted path to dist folder
+          path: './Quizard_client/dist'
 
   deploy:
     environment:
