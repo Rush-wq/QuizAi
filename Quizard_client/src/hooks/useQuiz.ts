@@ -32,7 +32,6 @@ export const useQuiz = () => {
     formData.append('prompt', prompt);
 
     try {
-      console.log("URL:" + QUIZ_API_URL);
       const response = await fetch(QUIZ_API_URL, {
         method: 'POST',
         body: formData
