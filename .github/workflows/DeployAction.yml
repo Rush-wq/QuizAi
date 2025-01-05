@@ -17,6 +17,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: github-pages-quizard-ai  # Make sure this matches exactly
     defaults:
       run:
         working-directory: ./Quizard_client
@@ -35,6 +36,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Debug env variables presence
+        run: |
+          echo "Checking if env variables are set (will show true/false):"
+          echo "AUTH0_CLIENT_ID is set: ${{ secrets.VITE_AUTH0_CLIENT_ID != '' }}"
+          echo "AUTH0_DOMAIN is set: ${{ secrets.VITE_AUTH0_DOMAIN != '' }}"
+          echo "BACKEND_DEV_URL is set: ${{ secrets.VITE_BACKEND_DEV_URL != '' }}"
+          echo "BACKEND_PROD_URL is set: ${{ secrets.VITE_BACKEND_PROD_URL != '' }}"
+          echo "QUIZ_GENERATION_API_URL is set: ${{ secrets.VITE_QUIZ_GENERATION_API_URL != '' }}"
+
       - name: Build
         env:
           VITE_AUTH0_CLIENT_ID: ${{ secrets.VITE_AUTH0_CLIENT_ID }}
@@ -45,18 +55,7 @@ jobs:
         run: npm run build
 
       - name: Create .nojekyll file
-        run: |
-          touch dist/.nojekyll
-          echo "Created .nojekyll file"
-
-      - name: Debug build output
-        run: |
-          echo "Contents of current directory:"
-          ls -la
-          echo "Contents of dist directory:"
-          ls -la dist/
-          echo "Checking index.html:"
-          cat dist/index.html || echo "index.html not found"
+        run: touch dist/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -68,7 +67,7 @@ jobs:
 
   deploy:
     environment:
-      name: github-pages
+      name: github-pages-quizard-ai  # Make sure this matches exactly
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
