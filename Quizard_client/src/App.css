@@ -469,3 +469,186 @@ body,
 .file-input{
   padding-top: 20px;
 }
+
+
+/* Login Button Styles */
+.auth-button {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.auth-button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.auth-button:active {
+  transform: translateY(0);
+}
+
+.auth-button:disabled {
+  background: var(--text-secondary);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Outlined variant */
+.auth-button-outlined {
+  background: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  padding: calc(1rem - 2px) calc(1.5rem - 2px);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.auth-button-outlined:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.auth-button-outlined:active {
+  transform: translateY(0);
+}
+
+/* Dark mode specific overrides */
+[data-theme="dark"] .auth-button {
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+}
+
+[data-theme="dark"] .auth-button:hover {
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+[data-theme="dark"] .auth-button-outlined {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+[data-theme="dark"] .auth-button-outlined:hover {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Auth Button Container */
+.auth-container {
+  position: fixed;
+  top: 2rem;
+  right: calc(2rem + 58px); /* 58px accounts for theme-toggle width (48px) + some spacing (10px) */
+  z-index: 1000;
+}
+
+/* Modify the auth button for this specific placement */
+.auth-container .auth-button,
+.auth-container .auth-button-outlined {
+  width: auto;
+  min-width: 100px;
+  height: 48px; /* Match height of theme-toggle */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .auth-container {
+      top: 1rem;
+      right: calc(1rem + 50px); /* Adjusted for smaller theme-toggle on mobile */
+  }
+  
+  .auth-container .auth-button,
+  .auth-container .auth-button-outlined {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.95rem;
+      height: 40px; /* Match smaller theme-toggle height on mobile */
+  }
+}
+
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 45px;
+  height: 45px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition-duration: .3s;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+  background-color: rgb(255, 65, 65);
+}
+
+/* plus sign */
+.logout-button-sign {
+  width: 100%;
+  transition-duration: .3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-button-sign svg {
+  width: 17px;
+}
+
+.logout-button-sign svg path {
+  fill: white;
+}
+/* text */
+.logout-button-text {
+  position: absolute;
+  right: 0%;
+  width: 0%;
+  opacity: 0;
+  color: white;
+  font-size: 1.2em;
+  font-weight: 600;
+  transition-duration: .3s;
+}
+/* hover effect on button width */
+.logout-button:hover {
+  width: 125px;
+  border-radius: 40px;
+  transition-duration: .3s;
+}
+
+.logout-button:hover .logout-button-sign {
+  width: 30%;
+  transition-duration: .3s;
+  padding-left: 20px;
+}
+/* hover effect button's text */
+.logout-button:hover .logout-button-text {
+  opacity: 1;
+  width: 70%;
+  transition-duration: .3s;
+  padding-right: 10px;
+}
+/* button click effect*/
+.logout-button:active {
+  transform: translate(2px ,2px);
+}
