@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { QuizData, APIResponse } from '../types/quiz';
+import { QUIZ_API_URL } from '../configs/apiConfig';
 
 export const useQuiz = () => {
   const [quiz, setQuiz] = useState<QuizData | null>(null);
@@ -31,7 +32,7 @@ export const useQuiz = () => {
     formData.append('prompt', prompt);
 
     try {
-      const response = await fetch('http://localhost:5000/api/v1/quiz/generate_quiz', {
+      const response = await fetch(QUIZ_API_URL, {
         method: 'POST',
         body: formData
       });

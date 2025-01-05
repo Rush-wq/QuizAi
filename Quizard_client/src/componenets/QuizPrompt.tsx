@@ -24,6 +24,7 @@ export const QuizPrompt: React.FC<QuizPromptProps> = ({
       <div className="prompt-header">
         <h1>Quizard AI</h1>
         <p className="subtitle">Create custom quizzes instantly with AI</p>
+        <p className="subtitle">*Note Quiz Creation might take a while on you first generation</p>
       </div>
       <div className="prompt-card">
         <textarea
